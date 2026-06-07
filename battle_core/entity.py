@@ -6,6 +6,7 @@ class Entity(ABC):
     def __init__(self, name, vitality, characteristics):
         self.name = name
         self.vitality = vitality
+        self.initial_vitality = vitality
         self.characteristics = characteristics
 
     def get_name(self):
@@ -16,6 +17,9 @@ class Entity(ABC):
 
     def get_vitality(self):
         return self.vitality
+    
+    def get_initial_vitality(self):
+        return self.initial_vitality
 
     def take_hit(self, damage):
         self.vitality = max(0, self.vitality - float(damage))

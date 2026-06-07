@@ -1,4 +1,4 @@
-from core.entity import Entity
+from battle_core.entity import Entity
 
 class ConcreteEntity(Entity):
     def __init__(self, name, vitality):
@@ -8,6 +8,8 @@ class ConcreteEntity(Entity):
         return self.characteristics["strength"]
     def defensive_power(self):
         return self.characteristics["defense"]
+    def initiative(self):
+        return 0
 
 def test_entity_has_expected_characteristics():
     entity = ConcreteEntity("Test Entity", 100)

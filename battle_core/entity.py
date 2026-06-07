@@ -36,3 +36,6 @@ class Entity(ABC):
     @abstractmethod
     def defensive_power(self):
         pass
+    @abstractmethod
+    def initiative(self):
+        pass

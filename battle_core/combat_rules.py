@@ -1,9 +1,10 @@
-from abc import ABC, abstractmethod
+from battle_core import entity
 
-class CombatRules(ABC):
+
+class CombatRules():
     
     def initiative_score(self, entity, luck):
-        return self.modified_speed(entity, luck)
+        return entity.initiative() + luck
         
     def is_automatic_failure(self, luck):
         return luck == 1
@@ -48,14 +49,20 @@ class CombatRules(ABC):
             "defender_luck": rng.randint(1, 100),
         }
 
-    @abstractmethod
     def calculate_base_damage(self, attacker, defender):
-        pass
-    
-    @abstractmethod
+        raw_damage = attacker.offensive_power() - defender.defensive_power()
+        return max(1, raw_damage)
+
     def calculate_turn_damage(self, attacker, defender, attacker_luck, defender_luck):
-        pass
+        if self.is_automatic_failure(attacker_luck):
+            return 0
+        damage = self.calculate_base_damage(attacker, defender)
+        if damage == 0:
+            return 0
+        if self.is_blocked(attacker, defender, attacker_luck, defender_luck):
+            return 1
+        damage = damage * self.critical_multiplier(attacker, defender, attacker_luck, defender_luck)
+        return max(1, round(damage, 2))
     
-    @abstractmethod
     def modified_speed(self, entity, luck):
-        pass
+        return entity.initiative() + luck

@@ -1,6 +1,3 @@
-from battle_core import entity
-
-
 class CombatRules():
     
     def initiative_score(self, entity, luck):

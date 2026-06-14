@@ -18,22 +18,22 @@ class Fight(ABC):
     def get_combat_rules(self):
         return self.__combat_rules
 
-    def order_to_hit(self, player_luck=0, opponent_luck=0):
+    def order_to_hit(self, attacker_luck=0, defender_luck=0):
         fighter_one_initiative = self.__combat_rules.initiative_score(
             self.get_fighter_one(),
-            player_luck,
+            attacker_luck,
         )
         fighter_two_initiative = self.__combat_rules.initiative_score(
             self.get_fighter_two(),
-            opponent_luck,
+            defender_luck,
         )
         if fighter_one_initiative >= fighter_two_initiative:
             return self.get_fighter_one(), self.get_fighter_two()
         return self.get_fighter_two(), self.get_fighter_one()
 
-    def play_turn(self, player_luck=0, opponent_luck=0):
-        player_luck = int(player_luck)
-        opponent_luck = int(opponent_luck)
+    def play_turn(self, attacker_luck=0, defender_luck=0):
+        attacker_luck = int(attacker_luck)
+        defender_luck = int(defender_luck)
 
         if not self.both_fighters_are_alive():
             winner = self.winner()
@@ -42,16 +42,16 @@ class Fight(ABC):
             return ["La batalla ya terminó. Vencedor " + winner.get_name()]
 
         first_attacker, second_attacker = self.order_to_hit(
-            player_luck,
-            opponent_luck,
+            attacker_luck,
+            defender_luck,
         )
         events = []
         events.append(
             self.attack_once(
                 first_attacker,
                 second_attacker,
-                player_luck,
-                opponent_luck,
+                attacker_luck,
+                defender_luck,
             )
         )
         if second_attacker.is_alive():
@@ -59,8 +59,8 @@ class Fight(ABC):
                 self.attack_once(
                     second_attacker,
                     first_attacker,
-                    player_luck,
-                    opponent_luck,
+                    attacker_luck,
+                    defender_luck,
                 )
             )
 
@@ -76,11 +76,11 @@ class Fight(ABC):
             return self.get_fighter_two()
         return None
     
-    def attack_once(self, attacker, defender, player_luck, opponent_luck):
+    def attack_once(self, attacker, defender, attacker_luck, defender_luck):
         attacker_luck, defender_luck = self.luck_for(
             attacker,
-            player_luck,
-            opponent_luck,
+            attacker_luck,
+            defender_luck,
         )
         defender_initial_vitality = defender.get_vitality()
         damage = self.get_combat_rules().calculate_turn_damage(
@@ -100,10 +100,10 @@ class Fight(ABC):
             defender_initial_vitality,
         )
     
-    def luck_for(self, attacker,  player_luck, opponent_luck):
+    def luck_for(self, attacker,  attacker_luck, defender_luck):
         if attacker == self.get_fighter_one():
-            return player_luck, opponent_luck
-        return opponent_luck, player_luck
+            return attacker_luck, defender_luck
+        return defender_luck, attacker_luck
     
     @abstractmethod
     def turn_text(self, attacker, defender, damage, attacker_luck, defender_luck, defender_initial_vitality):
